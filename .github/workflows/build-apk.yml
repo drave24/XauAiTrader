@@ -13,7 +13,7 @@ jobs:
 
       - name: Extract Android project
         run: |
-          unzip -o XauAiTraderAndroid_Project.zip -d extracted
+          unzip -o XauAiTraderAndroid_GitHubBuild.zip -d extracted
 
       - name: Set up Java
         uses: actions/setup-java@v5
