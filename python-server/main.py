@@ -1,5 +1,10 @@
-from fastapi import FastAPI
+import os
 from datetime import datetime
+
+from fastapi import FastAPI
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = FastAPI(title="XAU AI Trader API")
 
