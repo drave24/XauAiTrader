@@ -40,7 +40,7 @@ jobs:
           echo "Project directory: $PROJECT_DIR"
           cd "$PROJECT_DIR"
           gradle assembleDebug --no-daemon
-          -Dkotlin.jvm.target.validation.mode=warning
+          
 
       - name: Upload APK
         uses: actions/upload-artifact@v5
