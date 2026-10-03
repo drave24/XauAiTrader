@@ -4,6 +4,11 @@ from datetime import datetime
 from fastapi import FastAPI
 from dotenv import load_dotenv
 
+try:
+    import MetaTrader5 as mt5
+except ImportError:
+    mt5 = None
+
 load_dotenv()
 
 app = FastAPI(title="XAU AI Trader API")
@@ -72,4 +77,29 @@ def stop_bot():
     return {
         "success": True,
         "status": "stop_requested"
+    }
+@app.get("/mt5")
+def mt5_status():
+    if mt5 is None:
+        return {
+            "installed": False,
+            "connected": False,
+            "status": "MetaTrader5 package not available"
+        }
+
+    connected = mt5.initialize()
+
+    if not connected:
+        return {
+            "installed": True,
+            "connected": False,
+            "status": "MT5 terminal not connected"
+        }
+
+    mt5.shutdown()
+
+    return {
+        "installed": True,
+        "connected": True,
+        "status": "MT5 terminal available"
     }
