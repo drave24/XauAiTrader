@@ -13,6 +13,10 @@ load_dotenv()
 
 app = FastAPI(title="XAU AI Trader API")
 
+# Internal bot state.
+# This controls the API state only and does not place trades.
+bot_running = False
+
 
 
 def get_mt5_candles(symbol="XAUUSD", timeframe_name="M5", bars=100):
@@ -111,7 +115,7 @@ def home():
 def status():
     return {
         "bot": "XAU AI Trader",
-        "status": "stopped",
+        "status": "running" if bot_running else "stopped",
         "symbol": "XAUUSD",
         "timeframe": "M5",
         "server_time": datetime.utcnow().isoformat()
@@ -192,17 +196,23 @@ def account():
 
 @app.post("/bot/start")
 def start_bot():
+    global bot_running
+    bot_running = True
+
     return {
         "success": True,
-        "status": "start_requested"
+        "status": "running"
     }
 
 
 @app.post("/bot/stop")
 def stop_bot():
+    global bot_running
+    bot_running = False
+
     return {
         "success": True,
-        "status": "stop_requested"
+        "status": "stopped"
     }
 @app.get("/mt5")
 def mt5_status():
