@@ -17,6 +17,23 @@ app = FastAPI(title="XAU AI Trader API")
 # This controls the API state only and does not place trades.
 bot_running = False
 
+# Bot safety and trading configuration.
+# Live trading remains disabled by default.
+bot_settings = {
+    "risk_percent": 0.5,
+    "confidence": 0.62,
+    "max_positions": 1,
+    "sl_atr": 1.5,
+    "tp_atr": 2.25,
+    "daily_loss_percent": 2.0,
+    "cooldown_minutes": 15,
+    "max_spread": 0.30,
+    "trading_enabled": True,
+    "live_mode": False
+}
+
+
+
 
 
 def get_mt5_candles(symbol="XAUUSD", timeframe_name="M5", bars=100):
@@ -214,6 +231,24 @@ def stop_bot():
         "success": True,
         "status": "stopped"
     }
+
+
+# Bot safety and trading configuration.
+# Live trading remains disabled by default.
+bot_settings = {
+    "risk_percent": 0.5,
+    "confidence": 0.62,
+    "max_positions": 1,
+    "sl_atr": 1.5,
+    "tp_atr": 2.25,
+    "daily_loss_percent": 2.0,
+    "cooldown_minutes": 15,
+    "max_spread": 0.30,
+    "trading_enabled": True,
+    "live_mode": False
+}
+
+
 @app.get("/mt5")
 def mt5_status():
     if mt5 is None:
