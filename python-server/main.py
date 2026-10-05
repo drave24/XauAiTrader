@@ -249,6 +249,11 @@ bot_settings = {
 }
 
 
+
+@app.get("/settings")
+def settings():
+    return bot_settings
+
 @app.get("/mt5")
 def mt5_status():
     if mt5 is None:
