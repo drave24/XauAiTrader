@@ -41,6 +41,64 @@ def get_mt5_candles(symbol="XAUUSD", timeframe_name="M5", bars=100):
     finally:
         mt5.shutdown()
 
+
+def get_mt5_account():
+    """Return MT5 account information when MT5 is available."""
+    if mt5 is None:
+        return None
+
+    if not mt5.initialize():
+        return None
+
+    try:
+        info = mt5.account_info()
+
+        if info is None:
+            return None
+
+        return {
+            "balance": float(info.balance),
+            "equity": float(info.equity),
+            "profit": float(info.profit),
+            "currency": info.currency
+        }
+    finally:
+        mt5.shutdown()
+
+
+def get_mt5_positions():
+    """Return open MT5 positions when MT5 is available."""
+    if mt5 is None:
+        return None
+
+    if not mt5.initialize():
+        return None
+
+    try:
+        positions = mt5.positions_get()
+
+        if positions is None:
+            return []
+
+        result = []
+
+        for position in positions:
+            result.append({
+                "ticket": int(position.ticket),
+                "symbol": position.symbol,
+                "type": int(position.type),
+                "volume": float(position.volume),
+                "price_open": float(position.price_open),
+                "price_current": float(position.price_current),
+                "profit": float(position.profit),
+                "sl": float(position.sl),
+                "tp": float(position.tp)
+            })
+
+        return result
+    finally:
+        mt5.shutdown()
+
 @app.get("/")
 def home():
     return {
@@ -105,6 +163,13 @@ def signal():
 
 @app.get("/positions")
 def positions():
+    data = get_mt5_positions()
+
+    if data is not None:
+        return {
+            "positions": data
+        }
+
     return {
         "positions": []
     }
@@ -112,6 +177,11 @@ def positions():
 
 @app.get("/account")
 def account():
+    data = get_mt5_account()
+
+    if data is not None:
+        return data
+
     return {
         "balance": 0,
         "equity": 0,
