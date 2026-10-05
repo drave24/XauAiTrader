@@ -276,7 +276,7 @@ private fun saveSettings(p: android.content.SharedPreferences, s: BotSettings) =
     .putBoolean("tradingEnabled", s.tradingEnabled).putBoolean("liveMode", s.liveMode).apply()
 
 @Composable
-fun Dashboard(modifier: Modifier, status: BotStatus, settings: BotSettings, busy: Boolean, onRefresh: () -> Unit, onToggle: () -> Unit, onEmergency: () -> Unit) {
+fun Dashboard(modifier: Modifier, status: BotStatus, settings: BotSettings, busy: Boolean, message: String, onRefresh: () -> Unit, onToggle: () -> Unit, onEmergency: () -> Unit) {
     LazyColumn(modifier.fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         item {
             Row(Modifier.fillMaxWidth(), Arrangement.SpaceBetween, Alignment.CenterVertically) {
