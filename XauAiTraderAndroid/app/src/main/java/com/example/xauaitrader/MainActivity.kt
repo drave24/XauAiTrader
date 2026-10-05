@@ -196,7 +196,7 @@ fun loadDashboard(server: String, token: String): DashboardResult {
                 running = running,
                 symbol = statusObj.optString("symbol", "XAUUSD"),
                 timeframe = statusObj.optString("timeframe", "M5"),
-                price = "API connected",
+                price = numberText(signalObj.optDouble("entry", 0.0)),
                 signal = signalObj.optString("signal", "WAIT"),
                 confidence = confidenceText,
                 entry = numberText(signalObj.optDouble("entry", 0.0)),
