@@ -82,12 +82,17 @@ def signal():
         2704.5, 2705.0, 2705.4, 2706.0, 2706.5
     ]
 
-    data = pd.DataFrame({
-        "open": [p - 0.3 for p in prices],
-        "high": [p + 0.5 for p in prices],
-        "low": [p - 0.5 for p in prices],
-        "close": prices
-    })
+    # Use real MT5 candles when MT5 is available.
+    # Otherwise use simulated candles for free Colab testing.
+    data = get_mt5_candles("XAUUSD", "M5", 100)
+
+    if data is None:
+        data = pd.DataFrame({
+            "open": [p - 0.3 for p in prices],
+            "high": [p + 0.5 for p in prices],
+            "low": [p - 0.5 for p in prices],
+            "close": prices
+        })
 
     result = generate_signal(data)
 
