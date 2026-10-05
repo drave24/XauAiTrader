@@ -14,6 +14,33 @@ load_dotenv()
 app = FastAPI(title="XAU AI Trader API")
 
 
+
+def get_mt5_candles(symbol="XAUUSD", timeframe_name="M5", bars=100):
+    """Get recent candles from MetaTrader 5.
+
+    This works on the future Windows VPS where the MT5 terminal is installed.
+    It returns None when MT5 is unavailable.
+    """
+    if mt5 is None:
+        return None
+
+    timeframe = getattr(mt5, "TIMEFRAME_M5", None)
+    if timeframe is None:
+        return None
+
+    if not mt5.initialize():
+        return None
+
+    try:
+        rates = mt5.copy_rates_from_pos(symbol, timeframe, 0, bars)
+
+        if rates is None or len(rates) == 0:
+            return None
+
+        return pd.DataFrame(rates)
+    finally:
+        mt5.shutdown()
+
 @app.get("/")
 def home():
     return {
