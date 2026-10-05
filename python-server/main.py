@@ -35,15 +35,39 @@ def status():
 
 @app.get("/signal")
 def signal():
+    import pandas as pd
+    from ai_logic import generate_signal
+
+    # Temporary simulated XAUUSD M5 candles for testing.
+    # Real MT5 candles will be connected later on Windows VPS.
+    prices = [
+        2678.0, 2679.2, 2680.1, 2681.0, 2680.7,
+        2681.8, 2682.4, 2683.1, 2682.8, 2684.0,
+        2684.8, 2685.2, 2684.9, 2685.6, 2686.1,
+        2686.8, 2687.2, 2686.9, 2687.8, 2688.4,
+        2688.9, 2689.2, 2688.7, 2689.6, 2690.1,
+        2690.5, 2691.0, 2690.8, 2691.5, 2692.0,
+        2692.4, 2693.0, 2692.7, 2693.5, 2694.1,
+        2694.6, 2695.0, 2695.4, 2696.0, 2696.5,
+        2697.0, 2697.4, 2698.0, 2698.5, 2699.0,
+        2699.4, 2700.0, 2700.5, 2701.0, 2701.5,
+        2702.0, 2702.4, 2703.0, 2703.5, 2704.0,
+        2704.5, 2705.0, 2705.4, 2706.0, 2706.5
+    ]
+
+    data = pd.DataFrame({
+        "open": [p - 0.3 for p in prices],
+        "high": [p + 0.5 for p in prices],
+        "low": [p - 0.5 for p in prices],
+        "close": prices
+    })
+
+    result = generate_signal(data)
+
     return {
         "symbol": "XAUUSD",
         "timeframe": "M5",
-        "signal": "WAIT",
-        "confidence": 0,
-        "entry": 0,
-        "stop_loss": 0,
-        "take_profit_1": 0,
-        "take_profit_2": 0
+        **result
     }
 
 
