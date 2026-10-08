@@ -45,7 +45,7 @@ data class BotStatus(
     val sl: String = "—",
     val tp1: String = "—",
     val tp2: String = "—",
-    val dailyPnl: String = "—",
+    val balance: String = "—", val equity: String = "—", val dailyPnl: String = "—",
     val positions: Int = 0
 )
 
@@ -179,6 +179,7 @@ fun loadDashboard(server: String, token: String): DashboardResult {
         val base = server.trim().removeSuffix("/")
         val statusObj = JSONObject(getApi(base, token, "/status"))
         val signalObj = JSONObject(getApi(base, token, "/signal"))
+        val accountObj = JSONObject(getApi(base, token, "/account"))
 
         val running = statusObj.optString("status", "stopped")
             .equals("running", ignoreCase = true)
@@ -202,7 +203,11 @@ fun loadDashboard(server: String, token: String): DashboardResult {
                 entry = numberText(signalObj.optDouble("entry", 0.0)),
                 sl = numberText(signalObj.optDouble("stop_loss", 0.0)),
                 tp1 = numberText(signalObj.optDouble("take_profit_1", 0.0)),
-                tp2 = numberText(signalObj.optDouble("take_profit_2", 0.0))
+                tp2 = numberText(signalObj.optDouble("take_profit_2", 0.0)),
+                balance = numberText(accountObj.optDouble("balance", 0.0)),
+                equity = numberText(accountObj.optDouble("equity", 0.0)),
+                dailyPnl = numberText(accountObj.optDouble("profit", 0.0)),
+                positions = 0
             ),
             "Connected"
         )
@@ -290,7 +295,7 @@ fun Dashboard(modifier: Modifier, status: BotStatus, settings: BotSettings, busy
         item { Card(Modifier.fillMaxWidth()) { Column(Modifier.padding(18.dp)) { Text("AI SIGNAL", style = MaterialTheme.typography.labelLarge); Text(status.signal, style = MaterialTheme.typography.displaySmall, fontWeight = FontWeight.Bold); Text("Confidence: ${status.confidence}"); Spacer(Modifier.height(8.dp)); Text("Price: ${status.price}") } } }
         item { Card(Modifier.fillMaxWidth()) { Column(Modifier.padding(18.dp)) { Text("TRADE PLAN", style = MaterialTheme.typography.labelLarge); PlanRow("Entry", status.entry); PlanRow("Stop Loss", status.sl); PlanRow("TP1", status.tp1); PlanRow("TP2", status.tp2) } } }
         item { Card(Modifier.fillMaxWidth()) { Column(Modifier.padding(18.dp)) { Text("ACTIVE SETTINGS", style = MaterialTheme.typography.labelLarge); PlanRow("Risk / trade", "${settings.riskPercent}%"); PlanRow("AI confidence", "${(settings.confidence * 100).toInt()}%"); PlanRow("Max positions", settings.maxPositions.toString()); PlanRow("SL / TP", "${settings.slAtr} / ${settings.tpAtr} ATR"); PlanRow("Daily loss limit", "${settings.dailyLoss}%"); PlanRow("Mode", if (settings.liveMode) "LIVE" else "DEMO") } } }
-        item { Card(Modifier.fillMaxWidth()) { Column(Modifier.padding(18.dp)) { Text("ACCOUNT", style = MaterialTheme.typography.labelLarge); PlanRow("Daily P/L", status.dailyPnl); PlanRow("Bot positions", status.positions.toString()) } } }
+        item { Card(Modifier.fillMaxWidth()) { Column(Modifier.padding(18.dp)) { Text("ACCOUNT", style = MaterialTheme.typography.labelLarge); PlanRow("Balance", status.balance); PlanRow("Equity", status.equity); PlanRow("Daily P/L", status.dailyPnl); PlanRow("Bot positions", status.positions.toString()) } } }
         item { Button(onClick = onToggle, enabled = !busy && settings.tradingEnabled, modifier = Modifier.fillMaxWidth().height(52.dp)) { Text(if (status.running) "STOP BOT" else "START BOT") } }
         item { OutlinedButton(onClick = onEmergency, enabled = !busy && status.positions > 0, modifier = Modifier.fillMaxWidth().height(50.dp)) { Text("EMERGENCY CLOSE ALL") } }
         item { Text("Settings are saved on this phone. Broker credentials stay on the VPS.", style = MaterialTheme.typography.bodySmall) }
